@@ -10,6 +10,9 @@ How will it be done:
 5) Test the detector by giving it real and fake images and see if it predicts correctly. During testing, we will test a GAN against itself and other GANs it has not seen before.
 6) Repeat steps 4 and 5 with different GANs
 7) Use results to see what is common between GANs to build the best detector
+8) Use pytorch grad-cam to visualize what the detector focuses on when detecting fakes.
+
+Note: If the GAN generates faces,use real face datasets. If it generates spiders, use real spider datasets.
 
 ## Helpful Vocab
 - GAN: Generative Adversarial Network. Two models are fighting to fool each other. One model (discriminator) will act as a judge, looking at images and thinking "is this real? or is it fake?" while the other model (generator) generates fake images from random noise that may look like tv static. The generator will continue to produce fake images until it fools the discriminator into believing it is a real image. The end result is the generator itself that has been trained to fool the discriminator. We now have something to generate realistic fake image.
