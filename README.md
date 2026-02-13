@@ -12,9 +12,9 @@ How will it be done:
 7) Use results to see what is common between GANs to build the best detector
 8) Use Grad-CAM to visualize what the detector focuses on for each GAN. Does it focus on the same areas across GANs? What does this tell us about GANs when generating content?
 
-Experiment 1: Same content dataset (All GANs face)
+Experiment 1: Detect same content dataset (All GANs may have been trained using faces)
 
-Experiment 2: Different content dataset (Some GANS face, others bedrooms)
+Experiment 2: Detect different content dataset (Some GANS may have been trained using faces, others bedrooms)
 
 ## Helpful Vocab
 - GAN: Generative Adversarial Network. Two models are fighting to fool each other. One model (discriminator) will act as a judge, looking at images and thinking "is this real? or is it fake?" while the other model (generator) generates fake images from random noise that may look like tv static. The generator will continue to produce fake images until it fools the discriminator into believing it is a real image. The end result is the generator itself that has been trained to fool the discriminator. We now have something to generate realistic fake image.
