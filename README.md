@@ -13,6 +13,7 @@ How will it be done:
 8) Use Grad-CAM to visualize what the detector focuses on for each GAN. Does it focus on the same areas across GANs? What does this tell us about GANs when generating content?
 
 Experiment 1: Same content dataset (All GANs face)
+
 Experiment 2: Different content dataset (Some GANS face, others bedrooms)
 
 Note: If the GAN generates faces, use real face datasets. If it generates bedrooms, use real bedroom datasets.
