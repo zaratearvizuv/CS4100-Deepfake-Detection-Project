@@ -4,7 +4,7 @@
 Overall goal: Detect deepfakes
 
 ## Research Question
-Which deepfake detection method generalize best across different GANs?
+Which deepfake detection method generalizes best across different GANs?
 
 How will it be done: 
 1) Download datasets that generated images from different GANs.
