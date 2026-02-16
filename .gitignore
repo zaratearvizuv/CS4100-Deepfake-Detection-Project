@@ -1,0 +1,12 @@
+# Datasets
+datasets/
+*.zip
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Models
+*.pth
+*.pt
+*.h5

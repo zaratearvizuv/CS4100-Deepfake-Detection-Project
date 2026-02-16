@@ -8,7 +8,7 @@ Which deepfake detection method generalizes best across different GANs?
 
 How will it be done: 
 1) Download datasets that generated images from different GANs.
-2) BUild multiple deepfake detectors using different methods:
+2) Build multiple deepfake detectors using different methods:
 - CNN (ResNet)
 - DCT + Gradient Boosting
 - Noise Pattern Analysis
