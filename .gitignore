@@ -1,5 +1,6 @@
 # Datasets
-datasets/
+datasets/*/
+!datasets/list.txt
 *.zip
 
 # Python cache
