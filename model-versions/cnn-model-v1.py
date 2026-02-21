@@ -27,9 +27,14 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Step 2: Preprocess the Data
 
+# Transform prepares images before sending off to model
+# .compose means make images with these changes
 transform = transforms.Compose([
+    # Resizes image resolution to 224x224. ResNet expects this input size
     transforms.Resize((224, 224)),
+    # Tensor ?
     transforms.ToTensor(),
+    # Normalize ?
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
 
