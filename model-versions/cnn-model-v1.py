@@ -12,6 +12,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms, models
 import os
+import time
 
 # Creates folder with results with automatic renaming
 def experiments_folder(base_name="cnn-model-v1-experiment"):
@@ -187,13 +188,23 @@ def validate(model, loader, criterion):
 # Training loop
 best_acc = 0.0
 
+start_time = time.time()
+
 for epoch in range(EPOCHS):
+    epoch_start = time.time()
+    
     train_loss, train_acc = train_epoch(model, train_loader, criterion, optimizer)
     valid_loss, valid_acc = validate(model, valid_loader, criterion)
+    
+    epoch_time = time.time() - epoch_start
+    elapsed_time = time.time() - start_time
+    estimated_total = elapsed_time / (epoch + 1) * EPOCHS
+    remaining_time = estimated_total - elapsed_time
     
     print(f"Epoch [{epoch+1}/{EPOCHS}]")
     print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%")
     print(f"Valid Loss: {valid_loss:.4f}, Valid Acc: {valid_acc:.2f}%")
+    print(f"Time: {epoch_time:.1f}s | Remaining: {remaining_time/60:.1f} min")
     
     # Save best model
     if valid_acc > best_acc:
@@ -208,12 +219,15 @@ print("\nTesting Model")
 model.load_state_dict(torch.load(os.path.join(RESULTS_FOLDER, "model.pth")))
 test_loss, test_acc = validate(model, test_loader, criterion)
 print(f"Test Accuracy: {test_acc:.2f}%")
+total_time = time.time() - start_time
+print(f"\nTotal training time: {total_time/60:.1f} minutes")
 
 # Save results to file
 results = f"""CNN ResNet Results
 
 Test Accuracy: {test_acc:.2f}%
 Best Validation Accuracy: {best_acc:.2f}%
+Total Training Time: {total_time/60:.1f} minutes
 
 Hyperparameters:
 - Epochs: {EPOCHS}
