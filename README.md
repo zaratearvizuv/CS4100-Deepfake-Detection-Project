@@ -10,6 +10,7 @@ How will it be done:
 1) Download datasets that generated images from different GANs.
 2) Build multiple deepfake detectors using different methods:
 - CNN (ResNet)
+- CNN (No pre-training)
 - DCT + Gradient Boosting
 - Noise Pattern Analysis
 - DIRE
