@@ -27,6 +27,9 @@ def experiments_folder(base_name="cnn-model-v1-experiment"):
     os.makedirs(folder_path)
     return folder_path
 
+RESULTS_FOLDER = experiments_folder()
+print(f"Results saved to: {RESULTS_FOLDER}\n")
+
 # If we used the csv file, then we would've had to manually parse data
 # CSV more useful once we need the metadata
 # Using the filepath is more efficient in it being automatically done
@@ -67,9 +70,11 @@ test_dataset = datasets.ImageFolder(os.path.join(CNN_FLICKR_DATASET, "test"), tr
 # DataLoader(dataset, batch size, shuffle images)
 # Feeds the datasets into the model by grabbing batch size images per epoch
 # num_workers loads data in parallet using assigned cpu cores
-train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4, pin_memory=True)
-valid_loader = DataLoader(valid_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=4, pin_memory=True)
-test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=4, pin_memory=True)
+# pin_memory helps gpu transfer speed. Pins RAM with memory then loadss to gpu,
+# only useful if there is a GPU. Wastes ram if there is no gpu
+train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0, pin_memory=True)
+valid_loader = DataLoader(valid_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0, pin_memory=True)
+test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0, pin_memory=True)
 
 # Step 3: Define the CNN Architecture
 
@@ -185,64 +190,60 @@ def validate(model, loader, criterion):
     
     return running_loss / len(loader), 100. * correct / total
 
+# Training loop
+best_acc = 0.0
+
+start_time = time.time()
+
+for epoch in range(EPOCHS):
+    epoch_start = time.time()
+    
+    train_loss, train_acc = train_epoch(model, train_loader, criterion, optimizer)
+    valid_loss, valid_acc = validate(model, valid_loader, criterion)
+    
+    epoch_time = time.time() - epoch_start
+    elapsed_time = time.time() - start_time
+    estimated_total = elapsed_time / (epoch + 1) * EPOCHS
+    remaining_time = estimated_total - elapsed_time
+    
+    print(f"Epoch [{epoch+1}/{EPOCHS}]")
+    print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%")
+    print(f"Valid Loss: {valid_loss:.4f}, Valid Acc: {valid_acc:.2f}%")
+    print(f"Time: {epoch_time:.1f}s | Remaining: {remaining_time/60:.1f} min")
+    
+    # Save best model
+    if valid_acc > best_acc:
+        best_acc = valid_acc
+        torch.save(model.state_dict(), os.path.join(RESULTS_FOLDER, "model.pth"))
+        print(f"Saved best model (acc: {best_acc:.2f}%)")
+
+# Step 6: Evaluate the Model
+
+# Test the model
+print("\nTesting Model")
+model.load_state_dict(torch.load(os.path.join(RESULTS_FOLDER, "model.pth")))
+test_loss, test_acc = validate(model, test_loader, criterion)
+print(f"Test Accuracy: {test_acc:.2f}%")
+total_time = time.time() - start_time
+print(f"\nTotal training time: {total_time/60:.1f} minutes")
+
+# Save results to file
+results = f"""CNN ResNet Results
+
+Test Accuracy: {test_acc:.2f}%
+Best Validation Accuracy: {best_acc:.2f}%
+Total Training Time: {total_time/60:.1f} minutes
+
+Hyperparameters:
+- Epochs: {EPOCHS}
+- Batch Size: {BATCH_SIZE}
+- Learning Rate: {LR}
+- Pre-trained: {PRE_TRAINED_BOOL}
+
+Dataset: {CNN_FLICKR_DATASET}
+"""
+
+with open(os.path.join(RESULTS_FOLDER, "results.txt"), "w") as f:
+    f.write(results)
+
 print(f"Results saved to {RESULTS_FOLDER}")
-
-# Only runs if in the main script, not one of the num_workers
-if __name__ == '__main__':
-    RESULTS_FOLDER = experiments_folder()
-    print(f"Results saved to: {RESULTS_FOLDER}\n")
-    
-    # Training loop
-    best_acc = 0.0
-    start_time = time.time()
-    
-    for epoch in range(EPOCHS):
-        epoch_start = time.time()
-        
-        train_loss, train_acc = train_epoch(model, train_loader, criterion, optimizer)
-        valid_loss, valid_acc = validate(model, valid_loader, criterion)
-        
-        epoch_time = time.time() - epoch_start
-        elapsed_time = time.time() - start_time
-        estimated_total = elapsed_time / (epoch + 1) * EPOCHS
-        remaining_time = estimated_total - elapsed_time
-    
-        print(f"Epoch [{epoch+1}/{EPOCHS}]")
-        print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%")
-        print(f"Valid Loss: {valid_loss:.4f}, Valid Acc: {valid_acc:.2f}%")
-        print(f"Time: {epoch_time:.1f}s | Remaining: {remaining_time/60:.1f} min")
-    
-        # Save best model
-        if valid_acc > best_acc:
-            best_acc = valid_acc
-            torch.save(model.state_dict(), os.path.join(RESULTS_FOLDER, "model.pth"))
-            print(f"Saved best model (acc: {best_acc:.2f}%)")
-            
-    # Step 6: Evaluate the Model
-
-    # Test the model
-    print("\nTesting Model")
-    model.load_state_dict(torch.load(os.path.join(RESULTS_FOLDER, "model.pth")))
-    test_loss, test_acc = validate(model, test_loader, criterion)
-    print(f"Test Accuracy: {test_acc:.2f}%")
-    total_time = time.time() - start_time
-    print(f"\nTotal training time: {total_time/60:.1f} minutes")
-
-    # Save results to file
-    results = f"""CNN ResNet Results
-
-    Test Accuracy: {test_acc:.2f}%
-    Best Validation Accuracy: {best_acc:.2f}%
-    Total Training Time: {total_time/60:.1f} minutes
-
-    Hyperparameters:
-    - Epochs: {EPOCHS}
-    - Batch Size: {BATCH_SIZE}
-    - Learning Rate: {LR}
-    - Pre-trained: {PRE_TRAINED_BOOL}
-
-    Dataset: {CNN_FLICKR_DATASET}
-    """
-
-    with open(os.path.join(RESULTS_FOLDER, "results.txt"), "w") as f:
-        f.write(results)
