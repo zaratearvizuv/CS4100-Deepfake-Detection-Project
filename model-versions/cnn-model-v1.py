@@ -1,5 +1,9 @@
 # CNN Model Skeleton for transfer learning
 
+
+
+
+
 # Step 1: Importing Libraries and Load Data
 
 import torch
@@ -8,6 +12,22 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms, models
 import os
+
+# Creates folder with results with automatic renaming
+def experiments_folder(base_name="cnn-model-v1-experiment"):
+    results_path = "experiments"
+    os.makedirs(results_path, exist_ok=True)
+    
+    experiment_num = 1
+    while os.path.exists(os.path.join(results_path, f"{base_name}-{experiment_num}")):
+        experiment_num += 1
+    
+    folder_path = os.path.join(results_path, f"{base_name}-{experiment_num}")
+    os.makedirs(folder_path)
+    return folder_path
+
+RESULTS_FOLDER = experiments_folder()
+print(f"Results saved to: {RESULTS_FOLDER}")
 
 # If we used the csv file, then we would've had to manually parse data
 # CSV more useful once we need the metadata
@@ -98,9 +118,21 @@ model = model.to(DEVICE)
 
 # Step 4: Set up loss and optimizer
 
-# Loss and optimizer
+# Criterion/Loss Function
+# CrossEntropyLoss is how it measures predicitions
+# Close score to classification is a low loss number
+# Far score to classification is a high loss number
+# Used for calculating error so optimizer knows how to adjust weights
 criterion = nn.CrossEntropyLoss()
+# How the model updates weights to reduce loss
+# Weights come in: input * weight = output or image pixels * weight = prediction
+# Weights change to get a correct prediction
+# Adam (Adaptive Moment Estimation) is an algorithm that decides how to adjust the weights
+# model.fc.parameters() only changes the final layer weights since we froze the previous layers
+# Learning rate is how much the weights change/step size
 optimizer = optim.Adam(model.fc.parameters(), lr=LR)
+
+# Step 5: Train the Model
 
 # Training function
 def train_epoch(model, loader, criterion, optimizer):
@@ -128,7 +160,7 @@ def train_epoch(model, loader, criterion, optimizer):
         if i % 100 == 0:
             print(f"\rBatch [{i}/{len(loader)}] Loss: {loss.item():.4f}", end="")
     
-    print("\nCurrent training complete")
+    print("\nCurrent batch training complete")
     
     return running_loss / len(loader), 100. * correct / total
 
@@ -152,8 +184,6 @@ def validate(model, loader, criterion):
     
     return running_loss / len(loader), 100. * correct / total
 
-# Step 5: Train the Model
-
 # Training loop
 best_acc = 0.0
 
@@ -168,15 +198,33 @@ for epoch in range(EPOCHS):
     # Save best model
     if valid_acc > best_acc:
         best_acc = valid_acc
-        torch.save(model.state_dict(), "cnn_detector_best.pth")
+        torch.save(model.state_dict(), os.path.join(RESULTS_FOLDER, "model.pth"))
         print(f"Saved best model (acc: {best_acc:.2f}%)")
 
 # Step 6: Evaluate the Model
 
 # Test the model
 print("\nTesting Model")
-model.load_state_dict(torch.load("cnn_detector_best.pth"))
+model.load_state_dict(torch.load(os.path.join(RESULTS_FOLDER, "model.pth")))
 test_loss, test_acc = validate(model, test_loader, criterion)
 print(f"Test Accuracy: {test_acc:.2f}%")
 
-print("\nDone! Model saved as 'cnn_detector_best.pth'")
+# Save results to file
+results = f"""CNN ResNet Results
+
+Test Accuracy: {test_acc:.2f}%
+Best Validation Accuracy: {best_acc:.2f}%
+
+Hyperparameters:
+- Epochs: {EPOCHS}
+- Batch Size: {BATCH_SIZE}
+- Learning Rate: {LR}
+- Pre-trained: {PRE_TRAINED_BOOL}
+
+Dataset: {CNN_FLICKR_DATASET}
+"""
+
+with open(os.path.join(RESULTS_FOLDER, "results.txt"), "w") as f:
+    f.write(results)
+
+print(f"Results saved to {RESULTS_FOLDER}")
