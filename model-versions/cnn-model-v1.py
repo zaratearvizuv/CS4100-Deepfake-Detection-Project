@@ -37,6 +37,7 @@ CNN_FLICKR_DATASET = os.path.join("datasets", "flickr-gan-dataset", "real_vs_fak
 
 # Hyperparameters
 # Batch size determines how many pictures go in per training epoc
+# More per batch means more memory. Also means can overfit more easily
 BATCH_SIZE = 64
 # Epochs are a training session. Too much causes overfitting
 EPOCHS = 10
@@ -166,7 +167,7 @@ def train_epoch(model, loader, criterion, optimizer):
         if i % 100 == 0:
             print(f"\rBatch [{i}/{len(loader)}] Loss: {loss.item():.4f}", end="")
     
-    print("\nCurrent batch training complete")
+    print("\nCurrent batch training complete\n")
     
     return running_loss / len(loader), 100. * correct / total
 
@@ -209,7 +210,7 @@ for epoch in range(EPOCHS):
     print(f"Epoch [{epoch+1}/{EPOCHS}]")
     print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%")
     print(f"Valid Loss: {valid_loss:.4f}, Valid Acc: {valid_acc:.2f}%")
-    print(f"Time: {epoch_time:.1f}s | Remaining: {remaining_time/60:.1f} min")
+    print(f"Time: {epoch_time/60:.1f} min | Remaining: {remaining_time/60:.1f} min")
     
     # Save best model
     if valid_acc > best_acc:

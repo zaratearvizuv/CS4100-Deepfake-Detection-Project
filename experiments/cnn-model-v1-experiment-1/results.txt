@@ -1,0 +1,13 @@
+CNN ResNet Results
+
+Test Accuracy: 90.33%
+Best Validation Accuracy: 90.33%
+Total Training Time: 78.2 minutes
+
+Hyperparameters:
+- Epochs: 10
+- Batch Size: 64
+- Learning Rate: 0.001
+- Pre-trained: True
+
+Dataset: datasets\flickr-gan-dataset\real_vs_fake\real-vs-fake
