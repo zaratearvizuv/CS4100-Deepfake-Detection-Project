@@ -28,7 +28,7 @@ def experiments_folder(base_name="cnn-model-v1-experiment"):
     return folder_path
 
 RESULTS_FOLDER = experiments_folder()
-print(f"Results saved to: {RESULTS_FOLDER}")
+print(f"Results saved to: {RESULTS_FOLDER}\n")
 
 # If we used the csv file, then we would've had to manually parse data
 # CSV more useful once we need the metadata
@@ -37,7 +37,7 @@ CNN_FLICKR_DATASET = os.path.join("datasets", "flickr-gan-dataset", "real_vs_fak
 
 # Hyperparameters
 # Batch size determines how many pictures go in per training epoc
-BATCH_SIZE = 32
+BATCH_SIZE = 64
 # Epochs are a training session. Too much causes overfitting
 EPOCHS = 10
 # Learning Rate is the step size the model takes to learn the optimum
@@ -69,9 +69,10 @@ test_dataset = datasets.ImageFolder(os.path.join(CNN_FLICKR_DATASET, "test"), tr
 
 # DataLoader(dataset, batch size, shuffle images)
 # Feeds the datasets into the model by grabbing batch size images per epoch
-train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
-valid_loader = DataLoader(valid_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
-test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
+# num_workers loads data in parallet using assigned cpu cores
+train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4, pin_memory=True)
+valid_loader = DataLoader(valid_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=4, pin_memory=True)
+test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=4, pin_memory=True)
 
 # Step 3: Define the CNN Architecture
 
@@ -116,6 +117,8 @@ model.fc = nn.Sequential(
 # Moves model to GPU or CPU so it can run there
 # Data and model must be on the same device to work together
 model = model.to(DEVICE)
+print(f"\nDevice: {DEVICE}")
+print(f"Model is on: {next(model.parameters()).device}")
 
 # Step 4: Set up loss and optimizer
 
