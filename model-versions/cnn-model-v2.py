@@ -1,6 +1,6 @@
-# This version has pre-trained ResNet layers set to True
-# Layers are also frozen since it's using the pre-trained layers
-# Optimizer changed to model.fc.parameters()
+# This version has pre-trained ResNet layers set to False
+# Layers are also unfrozen since it now has to learn from scratch
+# Optimizer changed to model.parameters()
 
 # Step 1: Importing Libraries and Load Data
 
@@ -13,7 +13,7 @@ import os
 import time
 
 # Creates folder with results with automatic renaming
-def experiments_folder(base_name="cnn-model-v1-experiment"):
+def experiments_folder(base_name="cnn-model-v2-experiment"):
     results_path = "experiments"
     os.makedirs(results_path, exist_ok=True)
     
@@ -45,7 +45,7 @@ LR = 0.001
 # Uses the GPU if possible
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-PRE_TRAINED_BOOL = True
+PRE_TRAINED_BOOL = False
 
 # Step 2: Preprocess the Data
 
@@ -135,7 +135,7 @@ criterion = nn.CrossEntropyLoss()
 # Adam (Adaptive Moment Estimation) is an algorithm that decides how to adjust the weights
 # model.fc.parameters() only changes the final layer weights since we froze the previous layers
 # Learning rate is how much the weights change/step size
-optimizer = optim.Adam(model.fc.parameters(), lr=LR)
+optimizer = optim.Adam(model.parameters(), lr=LR)
 
 # Step 5: Train the Model
 
@@ -192,6 +192,8 @@ def validate(model, loader, criterion):
 # Training loop
 best_acc = 0.0
 
+epoch_results = []
+
 start_time = time.time()
 
 for epoch in range(EPOCHS):
@@ -209,6 +211,14 @@ for epoch in range(EPOCHS):
     print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%")
     print(f"Valid Loss: {valid_loss:.4f}, Valid Acc: {valid_acc:.2f}%")
     print(f"Time: {epoch_time/60:.1f} min | Remaining: {remaining_time/60:.1f} min")
+    
+    epoch_results.append({
+        'epoch': epoch + 1,
+        'train_loss': train_loss,
+        'train_acc': train_acc,
+        'valid_loss': valid_loss,
+        'valid_acc': valid_acc
+        })
     
     # Save best model
     if valid_acc > best_acc:
@@ -240,7 +250,10 @@ Hyperparameters:
 - Pre-trained: {PRE_TRAINED_BOOL}
 
 Dataset: {CNN_FLICKR_DATASET}
+Results Per-Epoch: 
 """
+for e in epoch_results:
+    results += f"Epoch {e['epoch']}: Train Acc: {e['train_acc']:.2f}%, Valid Acc: {e['valid_acc']:.2f}%\n"
 
 with open(os.path.join(RESULTS_FOLDER, "results.txt"), "w") as f:
     f.write(results)
