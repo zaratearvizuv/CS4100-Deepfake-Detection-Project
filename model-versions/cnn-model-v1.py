@@ -192,6 +192,8 @@ def validate(model, loader, criterion):
 # Training loop
 best_acc = 0.0
 
+epoch_results = []
+
 start_time = time.time()
 
 for epoch in range(EPOCHS):
@@ -209,6 +211,14 @@ for epoch in range(EPOCHS):
     print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%")
     print(f"Valid Loss: {valid_loss:.4f}, Valid Acc: {valid_acc:.2f}%")
     print(f"Time: {epoch_time/60:.1f} min | Remaining: {remaining_time/60:.1f} min")
+    
+    epoch_results.append({
+        'epoch': epoch + 1,
+        'train_loss': train_loss,
+        'train_acc': train_acc,
+        'valid_loss': valid_loss,
+        'valid_acc': valid_acc
+        })
     
     # Save best model
     if valid_acc > best_acc:
@@ -240,7 +250,10 @@ Hyperparameters:
 - Pre-trained: {PRE_TRAINED_BOOL}
 
 Dataset: {CNN_FLICKR_DATASET}
+Results Per-Epoch: 
 """
+for e in epoch_results:
+    results += f"Epoch {e['epoch']}: Train Acc: {e['train_acc']:.2f}%, Valid Acc: {e['valid_acc']:.2f}%\n"
 
 with open(os.path.join(RESULTS_FOLDER, "results.txt"), "w") as f:
     f.write(results)
