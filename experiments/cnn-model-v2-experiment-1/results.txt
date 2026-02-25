@@ -1,0 +1,24 @@
+CNN ResNet Results
+
+Test Accuracy: 50.00%
+Best Validation Accuracy: 50.00%
+Total Training Time: 84.7 minutes
+
+Hyperparameters:
+- Epochs: 10
+- Batch Size: 64
+- Learning Rate: 0.001
+- Pre-trained: False
+
+Dataset: datasets\flickr-gan-dataset\real_vs_fake\real-vs-fake
+Results Per-Epoch: 
+Epoch 1: Train Acc: 52.32%, Valid Acc: 50.00%
+Epoch 2: Train Acc: 50.02%, Valid Acc: 50.00%
+Epoch 3: Train Acc: 49.77%, Valid Acc: 50.00%
+Epoch 4: Train Acc: 50.09%, Valid Acc: 50.00%
+Epoch 5: Train Acc: 49.73%, Valid Acc: 50.00%
+Epoch 6: Train Acc: 49.89%, Valid Acc: 50.00%
+Epoch 7: Train Acc: 50.04%, Valid Acc: 50.00%
+Epoch 8: Train Acc: 49.86%, Valid Acc: 49.99%
+Epoch 9: Train Acc: 49.74%, Valid Acc: 50.00%
+Epoch 10: Train Acc: 50.10%, Valid Acc: 49.99%
