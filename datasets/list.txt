@@ -1,2 +1,2 @@
 Datasets used in the project:
-1) https://www.kaggle.com/datasets/xhlulu/140k-real-and-fake-faces
+1) https://www.kaggle.com/datasets/xhlulu/140k-real-and-fake-faces : StyleGAN
