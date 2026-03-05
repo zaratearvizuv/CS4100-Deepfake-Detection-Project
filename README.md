@@ -47,3 +47,4 @@ How will it be done:
       - That sum is your coefficient for that pattern
     
     This process is applied to every 8x8 block in the image.
+- Reading The Coefficients Block: The cell at position 0 is called the DC coefficient while the other 63 coefficients are called AC. DC stands for direct current while AC stands for alternating current. DC represents the average brightness of the image while AC holds frequency details throughout the image.
