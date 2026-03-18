@@ -47,4 +47,6 @@ How will it be done:
       - That sum is your coefficient for that pattern
     
     This process is applied to every 8x8 block in the image.
-- Reading The Coefficients Block: The cell at position 0 is called the DC coefficient while the other 63 coefficients are called AC. DC stands for direct current while AC stands for alternating current. DC represents the average brightness of the image while AC holds frequency details throughout the image.
+  - Reading The Coefficients Block: The cell at position 0 is called the DC coefficient while the other 63 coefficients are called AC. DC stands for direct current while AC stands for alternating current. DC represents the average brightness of the image while AC holds frequency details throughout the image.
+
+- Gradient Boosting: A collection of decision trees, similar to random forest. Unlike random forest which builds trees independently and averages their results, gradient boosting is additive where each new tree learns from the previous tree, gradually improving the overall prediction. It does this by minimizing the gradient of the loss function, a measure of how wrong the prediction is.
