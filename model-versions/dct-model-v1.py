@@ -16,8 +16,6 @@ TRAIN_FAKE_DIR = os.path.join("datasets", "flickr-gan-dataset", "real_vs_fake", 
 TRAIN_REAL_DIR = os.path.join("datasets", "flickr-gan-dataset", "real_vs_fake", "real-vs-fake", "train", "real")
 TEST_FAKE_DIR = os.path.join("datasets", "flickr-gan-dataset", "real_vs_fake", "real-vs-fake", "test", "fake")
 TEST_REAL_DIR = os.path.join("datasets", "flickr-gan-dataset", "real_vs_fake", "real-vs-fake", "test", "real")
-VALID_FAKE_DIR = os.path.join("datasets", "flickr-gan-dataset", "real_vs_fake", "real-vs-fake", "valid", "fake")
-VALID_REAL_DIR = os.path.join("datasets", "flickr-gan-dataset", "real_vs_fake", "real-vs-fake", "valid", "real")
 # This number determines how many images are loaded per real or fake class
 MAX_IMAGES = 25000
 
