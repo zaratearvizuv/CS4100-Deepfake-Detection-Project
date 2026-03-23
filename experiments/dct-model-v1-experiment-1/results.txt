@@ -6,6 +6,7 @@ Test images per class: 25000
 GB n_estimators: 100
 GB learning_rate: 0.6
 GB max_depth: 2
+Color Type: Black & White
 
 Classification Report:
               precision    recall  f1-score   support

@@ -1,0 +1,21 @@
+Dataset: flickr-gan-dataset (StyleGAN)
+
+Test Accuracy: 70.58%
+Train images per class: 25000
+Test images per class: 25000
+GB n_estimators: 100
+GB learning_rate: 0.6
+GB max_depth: 2
+Color Type: RGB
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        Real       0.70      0.72      0.71     10000
+        Fake       0.71      0.69      0.70     10000
+
+    accuracy                           0.71     20000
+   macro avg       0.71      0.71      0.71     20000
+weighted avg       0.71      0.71      0.71     20000
+
+Total Time: 111.48 minutes

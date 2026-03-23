@@ -1,5 +1,5 @@
 # This model trains and tests on same flicker gan dataset. StyleGAN against itself
-# Uses a black and white color conversion
+# Uses all RGB color values
 
 # Step 1: Importing Libraries and Load Data
 
@@ -35,62 +35,71 @@ def experiments_folder(base_name):
     os.makedirs(folder_path)
     return folder_path
 
+
 def extract_dct_features(img_path):
-    # Load image and convert to grayscale
-    img = cv2.imread(img_path)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img = cv2.imread(img_path)  # loads as BGR color
     
     # Make dimensions multiple of 8 via cropping
-    h, w = img.shape
+    h, w = img.shape[:2]
     h = (h // 8) * 8
     w = (w // 8) * 8
     img = img[:h, :w].astype(np.float32)
     
-    # Collect AC coefficients across all 8x8 blocks
-    ac_coeffs = [[] for _ in range(63)]
+    all_betas = []
     
-    for i in range(0, h, 8):
-        for j in range(0, w, 8):
-            block = img[i:i+8, j:j+8]
-            dct_block = cv2.dct(block)
-            
-            # Flatten in zigzag order, skip DC (position 0)
-            flat = dct_block.flatten()
-            for k in range(1, 64):  # skip index 0 (DC)
-                ac_coeffs[k-1].append(flat[k])
+    # Process each color channel separately (B, G, R)
+    for ch in range(3):
+        channel = img[:, :, ch]
+        ac_coeffs = [[] for _ in range(63)]
+        
+        for i in range(0, h, 8):
+            for j in range(0, w, 8):
+                block = channel[i:i+8, j:j+8]
+                dct_block = cv2.dct(block)
+                flat = dct_block.flatten()
+                for k in range(1, 64):
+                    ac_coeffs[k-1].append(flat[k])
+        
+        for coeffs in ac_coeffs:
+            loc, scale = laplace.fit(coeffs)
+            all_betas.append(scale)
     
-    # Fit Laplacian to each AC coefficient → extract β
-    betas = []
-    for coeffs in ac_coeffs:
-        loc, scale = laplace.fit(coeffs)
-        betas.append(scale)  # scale = β
-    
-    return np.array(betas)  # 63 β values
+    return np.array(all_betas)  # 189 β values (63 per channel)
 
 def build_dataset(real_dir, fake_dir, max_per_class=MAX_IMAGES):
     X, y = [], []
     
-    print("Extracting DCT features from real images...")
     real_files = [f for f in os.listdir(real_dir) 
                   if f.endswith(('.jpg', '.png'))][:max_per_class]
+    fake_files = [f for f in os.listdir(fake_dir) 
+                  if f.endswith(('.jpg', '.png'))][:max_per_class]
+    
+    total_files = len(real_files) + len(fake_files)
+    dataset_start = time.time()
+
+    print("Extracting DCT features from real images...")
     for i, f in enumerate(real_files):
         path = os.path.join(real_dir, f)
         features = extract_dct_features(path)
         X.append(features)
-        y.append(0)  # 0 = real
+        y.append(0)
         if (i+1) % 500 == 0:
-            print(f"  {i+1}/{len(real_files)}")
-    
+            elapsed = time.time() - dataset_start
+            done = i + 1
+            remaining = (elapsed / done) * (total_files - done)
+            print(f"  {i+1}/{total_files} | Elapsed: {int(elapsed//60)}m {int(elapsed%60)}s | Remaining: {int(remaining//60)}m {int(remaining%60)}s")
+
     print("Extracting DCT features from fake images...")
-    fake_files = [f for f in os.listdir(fake_dir) 
-                  if f.endswith(('.jpg', '.png'))][:max_per_class]
     for i, f in enumerate(fake_files):
         path = os.path.join(fake_dir, f)
         features = extract_dct_features(path)
         X.append(features)
-        y.append(1)  # 1 = fake
+        y.append(1)
+        offset = len(real_files) + i + 1
         if (i+1) % 500 == 0:
-            print(f"  {i+1}/{len(fake_files)}")
+            elapsed = time.time() - dataset_start
+            remaining = (elapsed / offset) * (total_files - offset)
+            print(f"  {offset}/{total_files} | Elapsed: {elapsed/60:.1f} min | Remaining: {remaining/60:.1f} min")
     
     return np.array(X), np.array(y)
 
@@ -124,7 +133,7 @@ print("\nClassification Report:")
 print(classification_report(y_test, y_pred, 
       target_names=['Real', 'Fake']))
 
-folder_path = experiments_folder("dct-model-v1-experiment")
+folder_path = experiments_folder("dct-model-v2-experiment")
 
 total_time = time.time() - start_time
 
@@ -136,6 +145,7 @@ with open(os.path.join(folder_path, "results.txt"), "w") as f:
     f.write(f"GB n_estimators: 100\n")
     f.write(f"GB learning_rate: 0.6\n")
     f.write(f"GB max_depth: 2\n")
+    f.write(f"Color Type: RGB\n")
     f.write(f"\nClassification Report:\n")
     f.write(classification_report(y_test, y_pred, target_names=['Real', 'Fake']))
     f.write(f"\nTotal Time: {total_time/60:.2f} minutes\n")
