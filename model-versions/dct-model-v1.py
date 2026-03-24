@@ -134,6 +134,7 @@ with open(os.path.join(folder_path, "results.txt"), "w") as f:
     f.write(f"GB n_estimators: 100\n")
     f.write(f"GB learning_rate: 0.6\n")
     f.write(f"GB max_depth: 2\n")
+    f.write(f"Color Type: Black & White")
     f.write(f"\nClassification Report:\n")
     f.write(classification_report(y_test, y_pred, target_names=['Real', 'Fake']))
     f.write(f"\nTotal Time: {total_time/60:.2f} minutes\n")
