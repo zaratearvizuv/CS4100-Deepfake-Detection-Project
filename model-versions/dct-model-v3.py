@@ -1,10 +1,11 @@
-# This model trains and tests on same stable diffusion dataset. Sttable diffusion against itself
+# This model trains and tests on same stable diffusion dataset. Stable diffusion against itself
 # Uses a black and white color conversion
 
 # Step 1: Importing Libraries and Load Data
 
 import os
 import cv2
+import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import laplace
 from sklearn.ensemble import GradientBoostingClassifier
@@ -14,8 +15,6 @@ import time
 
 TRAIN_FAKE_DIR = os.path.join("datasets", "stable-diffusion-dataset", "text2img", "text2img")
 TRAIN_REAL_DIR = os.path.join("datasets", "stable-diffusion-dataset", "wiki", "wiki")
-TEST_FAKE_DIR = os.path.join("datasets", "stable-diffusion-dataset", "text2img", "text2img")
-TEST_REAL_DIR = os.path.join("datasets", "stable-diffusion-dataset", "wiki", "wiki")
 # This number determines how many images are loaded per real or fake class
 MAX_IMAGES = 30000
 
@@ -108,13 +107,15 @@ def build_dataset(real_dir, fake_dir, max_per_class=MAX_IMAGES):
 
 start_time = time.time()
 
-print("Building training dataset...")
-X_train, y_train = build_dataset(TRAIN_REAL_DIR, TRAIN_FAKE_DIR)
-print(f"Dataset shape: {X_train.shape}")
+print("Building dataset...")
+X_all, y_all = build_dataset(TRAIN_REAL_DIR, TRAIN_FAKE_DIR)
+print(f"Dataset shape: {X_all.shape}")
 
-print("Building test dataset...")
-X_test, y_test = build_dataset(TEST_REAL_DIR, TEST_FAKE_DIR)
-print(f"Test dataset shape: {X_test.shape}")
+# Split into train and test
+X_train, X_test, y_train, y_test = train_test_split(
+    X_all, y_all, test_size=0.2, random_state=42, stratify=y_all
+)
+print(f"Train: {X_train.shape} | Test: {X_test.shape}")
 
 # Train Gradient Boosting classifier
 print("Training Gradient Boosting classifier...")
@@ -127,6 +128,11 @@ clf = GradientBoostingClassifier(
 clf.fit(X_train, y_train)
 print("Training complete.")
 
+# Check for overfitting
+y_train_pred = clf.predict(X_train)
+train_acc = accuracy_score(y_train, y_train_pred)
+print(f"Train Accuracy: {train_acc * 100:.2f}%")
+
 # Evaluate
 print("Evaluating...")
 y_pred = clf.predict(X_test)
@@ -138,17 +144,42 @@ print(classification_report(y_test, y_pred,
 
 folder_path = experiments_folder("dct-model-v3-experiment")
 
+# Plot training progress (staged scores)
+train_scores = []
+test_scores = []
+
+for y_train_staged, y_test_staged in zip(
+    clf.staged_predict(X_train), 
+    clf.staged_predict(X_test)
+):
+    train_scores.append(accuracy_score(y_train, y_train_staged))
+    test_scores.append(accuracy_score(y_test, y_test_staged))
+
+plt.figure(figsize=(10, 6))
+plt.plot(train_scores, label='Train Accuracy')
+plt.plot(test_scores, label='Test Accuracy')
+plt.xlabel('Number of Trees')
+plt.ylabel('Accuracy')
+plt.title('Gradient Boosting - Training Progress')
+plt.legend()
+plt.grid(True)
+plt.savefig(os.path.join(folder_path, 'training_progress.png'))
+plt.show()
+print("Plot saved.")
+
 total_time = time.time() - start_time
 
 with open(os.path.join(folder_path, "results.txt"), "w") as f:
     f.write(f"Dataset: stable-diffusion-dataset (Stable Diffusion V1.5)\n")
-    f.write(f"\nTest Accuracy: {acc * 100:.2f}%\n")
-    f.write(f"Train images per class: {MAX_IMAGES}\n")
-    f.write(f"Test images per class: {MAX_IMAGES}\n")
+    f.write(f"Train images: {len(X_train)}\n")
+    f.write(f"Test images: {len(X_test)}\n")
+    f.write(f"\nTrain Accuracy: {train_acc * 100:.2f}%\n")
+    f.write(f"Test Accuracy: {acc * 100:.2f}%\n")
+    f.write(f"Difference (overfit check): {(train_acc - acc) * 100:.2f}%\n")
     f.write(f"GB n_estimators: 100\n")
     f.write(f"GB learning_rate: 0.6\n")
     f.write(f"GB max_depth: 2\n")
-    f.write(f"Color Type: Black & White")
+    f.write(f"Color Type: Black & White\n")
     f.write(f"\nClassification Report:\n")
     f.write(classification_report(y_test, y_pred, target_names=['Real', 'Fake']))
     f.write(f"\nTotal Time: {total_time/60:.2f} minutes\n")

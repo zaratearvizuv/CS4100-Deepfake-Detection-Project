@@ -122,6 +122,11 @@ clf = GradientBoostingClassifier(
 clf.fit(X_train, y_train)
 print("Training complete.")
 
+# Check for overfitting
+y_train_pred = clf.predict(X_train)
+train_acc = accuracy_score(y_train, y_train_pred)
+print(f"Train Accuracy: {train_acc * 100:.2f}%")
+
 # Evaluate
 print("Evaluating...")
 y_pred = clf.predict(X_test)
@@ -137,7 +142,9 @@ total_time = time.time() - start_time
 
 with open(os.path.join(folder_path, "results.txt"), "w") as f:
     f.write(f"Dataset: flickr-gan-dataset (StyleGAN)\n")
-    f.write(f"\nTest Accuracy: {acc * 100:.2f}%\n")
+    f.write(f"\nTrain Accuracy: {train_acc * 100:.2f}%\n")
+    f.write(f"Test Accuracy: {acc * 100:.2f}%\n")
+    f.write(f"Difference (overfit check): {(train_acc - acc) * 100:.2f}%\n")
     f.write(f"Train images per class: {MAX_IMAGES}\n")
     f.write(f"Test images per class: {MAX_IMAGES}\n")
     f.write(f"GB n_estimators: 100\n")

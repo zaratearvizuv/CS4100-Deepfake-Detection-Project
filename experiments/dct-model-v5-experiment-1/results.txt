@@ -1,0 +1,25 @@
+Experiment: Cross-GAN Generalization
+Train Dataset: stable-diffusion-dataset (Stable Diffusion V1.5)
+Test Dataset: flickr-gan-dataset (StyleGAN1)
+Train images: 50000
+Test images: 20000
+
+Train Accuracy: 92.86%
+Test Accuracy: 50.02%
+Difference (overfit check): 42.84%
+GB n_estimators: 100
+GB learning_rate: 0.6
+GB max_depth: 2
+Color Type: Black & White
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        Real       0.50      1.00      0.67     10000
+        Fake       0.54      0.00      0.00     10000
+
+    accuracy                           0.50     20000
+   macro avg       0.52      0.50      0.34     20000
+weighted avg       0.52      0.50      0.34     20000
+
+Total Time: 52.39 minutes

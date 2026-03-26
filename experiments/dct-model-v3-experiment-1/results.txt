@@ -1,20 +1,23 @@
 Dataset: stable-diffusion-dataset (Stable Diffusion V1.5)
+Train images: 48000
+Test images: 12000
 
-Test Accuracy: 92.77%
-Train images per class: 30000
-Test images per class: 30000
+Train Accuracy: 92.99%
+Test Accuracy: 91.40%
+Difference (overfit check): 1.59%
 GB n_estimators: 100
 GB learning_rate: 0.6
 GB max_depth: 2
+Color Type: Black & White
 
 Classification Report:
               precision    recall  f1-score   support
 
-        Real       0.93      0.92      0.93     30000
-        Fake       0.92      0.93      0.93     30000
+        Real       0.92      0.91      0.91      6000
+        Fake       0.91      0.92      0.91      6000
 
-    accuracy                           0.93     60000
-   macro avg       0.93      0.93      0.93     60000
-weighted avg       0.93      0.93      0.93     60000
+    accuracy                           0.91     12000
+   macro avg       0.91      0.91      0.91     12000
+weighted avg       0.91      0.91      0.91     12000
 
-Total Time: 125.66 minutes
+Total Time: 60.91 minutes
