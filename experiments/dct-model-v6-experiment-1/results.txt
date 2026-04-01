@@ -1,0 +1,35 @@
+Experiment: StyleGAN2 Same-GAN Test
+Fake Dataset: sfhq-part3 (StyleGAN2)
+Real Dataset: flickr-gan-dataset (Flickr real faces)
+Train images: 48000
+Test images: 12000
+
+Train Accuracy: 100.00%
+Test Accuracy: 99.99%
+Difference (overfit check): 0.01%
+GB n_estimators: 100
+GB learning_rate: 0.6
+GB max_depth: 2
+Color Type: Black & White
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        Real       1.00      1.00      1.00      6000
+        Fake       1.00      1.00      1.00      6000
+
+    accuracy                           1.00     12000
+   macro avg       1.00      1.00      1.00     12000
+weighted avg       1.00      1.00      1.00     12000
+
+Confusion Matrix:
+                  Predicted Real  Predicted Fake
+  Actual Real     5999            1
+  Actual Fake     0               6000
+
+True Positives  (Fake correctly detected): 6000
+True Negatives  (Real correctly detected): 5999
+False Positives (Real misclassified as Fake): 1
+False Negatives (Fake misclassified as Real): 0
+
+Total Time: 115.06 minutes

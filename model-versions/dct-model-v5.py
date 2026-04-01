@@ -32,6 +32,8 @@ def experiments_folder(base_name):
 
 def extract_dct_features(img_path):
     img = cv2.imread(img_path)
+    if img is None:
+        return None
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     h, w = img.shape
     h = (h // 8) * 8
@@ -50,23 +52,6 @@ def extract_dct_features(img_path):
         loc, scale = laplace.fit(coeffs)
         betas.append(scale)
     return np.array(betas)
-
-def load_images_flat(real_dir, fake_dir, max_per_class):
-    real_files = [os.path.join(real_dir, f) for f in os.listdir(real_dir)
-                  if f.endswith(('.jpg', '.png'))][:max_per_class]
-    fake_files = [os.path.join(fake_dir, f) for f in os.listdir(fake_dir)
-                  if f.endswith(('.jpg', '.png'))][:max_per_class]
-    return real_files, fake_files
-
-def load_images_nested(real_dir, fake_dir, max_per_class):
-    def walk(d):
-        files = []
-        for dirpath, _, filenames in os.walk(d):
-            for f in filenames:
-                if f.endswith(('.jpg', '.png')):
-                    files.append(os.path.join(dirpath, f))
-        return files[:max_per_class]
-    return walk(real_dir), walk(fake_dir)
 
 def build_features(real_files, fake_files, label=""):
     X, y = [], []
@@ -90,6 +75,23 @@ def build_features(real_files, fake_files, label=""):
             remaining = (elapsed / offset) * (total - offset)
             print(f"  {offset}/{total} | Elapsed: {int(elapsed//60)}m {int(elapsed%60)}s | Remaining: {int(remaining//60)}m {int(remaining%60)}s")
     return np.array(X), np.array(y)
+
+def load_images_flat(real_dir, fake_dir, max_per_class):
+    real_files = [os.path.join(real_dir, f) for f in os.listdir(real_dir)
+                  if f.endswith(('.jpg', '.png'))][:max_per_class]
+    fake_files = [os.path.join(fake_dir, f) for f in os.listdir(fake_dir)
+                  if f.endswith(('.jpg', '.png'))][:max_per_class]
+    return real_files, fake_files
+
+def load_images_nested(real_dir, fake_dir, max_per_class):
+    def walk(d):
+        files = []
+        for dirpath, _, filenames in os.walk(d):
+            for f in filenames:
+                if f.endswith(('.jpg', '.png')):
+                    files.append(os.path.join(dirpath, f))
+        return files[:max_per_class]
+    return walk(real_dir), walk(fake_dir)
 
 start_time = time.time()
 
