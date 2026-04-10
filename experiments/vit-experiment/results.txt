@@ -1,0 +1,40 @@
+Experiment: ViT Deepfake Detection
+Model: vit_base_patch16_224 (timm, pretrained ImageNet, fine tuned)
+Dataset: 140k Real and Fake Faces
+Device: cuda (GPU T4 x2)
+Train images: 100000
+Valid images: 20000
+Test images: 20000
+
+Train Accuracy: 98.26%
+Validation Accuracy: 99.72%
+Test Accuracy: 99.72%
+Difference (overfit check): 1.46%
+Batch size: 32
+Epochs: 1
+Learning rate: 2e-05
+Optimizer: Adam
+Loss: BCEWithLogitsLoss
+Parameters: 86567169
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        Fake     0.9955    0.9989    0.9972     10000
+        Real     0.9989    0.9955    0.9972     10000
+
+    accuracy                         0.9972     20000
+   macro avg     0.9972    0.9972    0.9972     20000
+weighted avg     0.9972    0.9972    0.9972     20000
+
+Confusion Matrix:
+                  Predicted Fake  Predicted Real
+  Actual Fake     9989               11
+  Actual Real     45               9955
+
+True Positives  (Real correctly detected): 9955
+True Negatives  (Fake correctly detected): 9989
+False Positives (Fake misclassified as Real): 11
+False Negatives (Real misclassified as Fake): 45
+
+Total Time: 64.17 minutes (1h 4m 10s · GPU T4 x2)
