@@ -1,0 +1,17 @@
+Noise Pattern Cross-Test: DeepFakeFace (HuggingFace)
+=====================================================
+Model trained on: StyleGAN1 (real_vs_fake)
+Tested on: OpenRL/DeepFakeFace (inpainting, insight, text2img)
+
+Accuracy: 46.58%
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        fake       0.03      0.00      0.00       900
+        real       0.48      0.93      0.64       899
+
+    accuracy                           0.47      1799
+   macro avg       0.26      0.47      0.32      1799
+weighted avg       0.26      0.47      0.32      1799
+

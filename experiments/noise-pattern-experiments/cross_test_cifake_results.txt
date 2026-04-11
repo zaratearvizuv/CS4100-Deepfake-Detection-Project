@@ -1,0 +1,17 @@
+Noise Pattern Cross-Test: CIFAKE (Stable Diffusion)
+=====================================================
+Model trained on: StyleGAN1 (real_vs_fake)
+Tested on: CIFAKE (Stable Diffusion generated images)
+
+Accuracy: 49.96%
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        fake       0.00      0.00      0.00      5000
+        real       0.50      1.00      0.67      5000
+
+    accuracy                           0.50     10000
+   macro avg       0.25      0.50      0.33     10000
+weighted avg       0.25      0.50      0.33     10000
+

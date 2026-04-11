@@ -1,0 +1,17 @@
+Noise Pattern Cross-Test: StyleGAN2
+=====================================
+Model trained on: StyleGAN1 (real_vs_fake)
+Tested on: StyleGAN2 (SFHQ part 3)
+
+Accuracy: 62.16%
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        fake       0.83      0.31      0.45      5000
+        real       0.57      0.94      0.71      4999
+
+    accuracy                           0.62      9999
+   macro avg       0.70      0.62      0.58      9999
+weighted avg       0.70      0.62      0.58      9999
+
