@@ -1,0 +1,39 @@
+Experiment: VGG16 + BatchNorm
+Train Dataset: StyleGAN1
+Test Dataset: StyleGAN1
+Train images: 80000
+Val images: 20000
+Test images: 20000
+
+Train Accuracy: 99.98%
+Test Accuracy: 99.55%
+Difference: 0.43%
+ROC-AUC Score: 0.99555
+AP Score: 0.99186
+
+Epochs: 15
+Batch Size: 32
+Learning Rate: 0.0001
+Optimizer: Adam
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        Real       1.00      0.99      1.00     10000
+        Fake       0.99      1.00      1.00     10000
+
+    accuracy                           1.00     20000
+   macro avg       1.00      1.00      1.00     20000
+weighted avg       1.00      1.00      1.00     20000
+
+Confusion Matrix:
+                  Predicted Real  Predicted Fake
+  Actual Real     9911            89
+  Actual Fake     0               10000
+
+True Positives  (Fake correctly detected): 10000
+True Negatives  (Real correctly detected): 9911
+False Positives (Real misclassified as Fake): 89
+False Negatives (Fake misclassified as Real): 0
+
+Total Time: 201.25 minutes
