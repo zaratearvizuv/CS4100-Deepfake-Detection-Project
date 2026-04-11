@@ -1,0 +1,19 @@
+DIRE Results: DeepFakeFace (HuggingFace)
+=========================================
+Dataset: OpenRL/DeepFakeFace (inpainting, insight, text2img)
+Diffusion Model: google/ddpm-cifar10-32
+Timestep: 100
+Max images per subdir: 300
+
+Accuracy: 49.92%
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        fake       0.50      0.51      0.50       900
+        real       0.50      0.49      0.49       899
+
+    accuracy                           0.50      1799
+   macro avg       0.50      0.50      0.50      1799
+weighted avg       0.50      0.50      0.50      1799
+

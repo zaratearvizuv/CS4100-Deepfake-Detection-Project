@@ -1,0 +1,19 @@
+DIRE Results: StyleGAN2
+=======================
+Dataset: SFHQ part 3 (StyleGAN2)
+Diffusion Model: google/ddpm-cifar10-32
+Timestep: 100
+Max images per class: 1000
+
+Accuracy: 49.87%
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        fake       0.50      0.63      0.56      1000
+        real       0.50      0.37      0.42       999
+
+    accuracy                           0.50      1999
+   macro avg       0.50      0.50      0.49      1999
+weighted avg       0.50      0.50      0.49      1999
+

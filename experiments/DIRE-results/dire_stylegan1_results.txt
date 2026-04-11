@@ -1,0 +1,19 @@
+DIRE Results: StyleGAN1
+=======================
+Dataset: real_vs_fake (StyleGAN1)
+Diffusion Model: google/ddpm-cifar10-32
+Timestep: 100
+Max images per class: 1000
+
+Accuracy: 50.58%
+
+Classification Report:
+              precision    recall  f1-score   support
+
+        fake       0.51      0.51      0.51      1000
+        real       0.51      0.51      0.51       999
+
+    accuracy                           0.51      1999
+   macro avg       0.51      0.51      0.51      1999
+weighted avg       0.51      0.51      0.51      1999
+
