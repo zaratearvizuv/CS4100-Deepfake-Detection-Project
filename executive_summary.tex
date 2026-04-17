@@ -108,14 +108,8 @@ The overarching finding is consistent; within-GAN accuracy is high, cross-GAN ac
 
 % ===== 4. CHALLENGES & LESSONS LEARNED =====
 \section{Challenges \& Lessons Learned}
-\begin{tcolorbox}[sectionbox, height=4.4cm, valign=top]
-  \placeholder{%
-    Discuss the main technical and organizational challenges
-    encountered during the project. For each challenge, briefly
-    explain how the team addressed or mitigated it.
-    Highlight lessons learned that would be valuable for future
-    work or for other teams tackling similar problems.
-    Aim for roughly 8--12 sentences.}
+\begin{tcolorbox}[sectionbox, height=7.2cm, valign=top]
+The most significant technical challenge was poor cross-GAN generalization across nearly every detection method. Models trained on StyleGAN2 achieved near-perfect accuracy on that dataset but dropped to around 50\% when tested on StyleGAN1 or Stable Diffusion, showing that models learned artifacts specific to one GAN rather than general signs of a fake image. The DCT + Gradient Boosting results made it clear that frequency-domain artifacts differ considerably depending on which GAN generated the image. Fine-tuning VGG was slow and demanding even on Kaggle GPUs, and completing 15 epochs took a considerable amount of time. The Vision Transformer was even harder to work with and the team was only able to complete one epoch of training; because one epoch was not enough for the model to learn meaningfully, the team decided not to include those results in the final comparison. This made it clear that transformer-based models require far more compute than CNNs and should only be attempted when stronger hardware is available. Coordinating experiments across four team members was also a challenge and required careful version control to keep model checkpoints and dataset splits consistent. A major lesson learned is that teams should agree on standardized evaluation splits and metrics early so that results from different methods can be compared fairly. Overall the project showed that a simpler, well-trained model will outperform a complex model that did not have enough time or resources to train properly.
 \end{tcolorbox}
 
 % ===== 5. INDIVIDUAL CONTRIBUTIONS =====

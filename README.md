@@ -14,6 +14,7 @@ How will it be done:
 - DCT + Gradient Boosting
 - Noise Pattern Analysis
 - DIRE
+- VGG16 + BatchNorm
 3) Train each detector on the same dataset
 4) Test each detector on the same GAN it was trained on. Then test each detector on different GANs it has not seen to see if it will generalize
 5) Analyze results and see which method was more accurate and if we can combine methods to better detect deepfakes.
@@ -31,6 +32,14 @@ How will it be done:
 | Stable Diffusion | Stable Diffusion | 92.99% | 91.40% | 1.59% |
 | Stable Diffusion | StyleGAN1 | 92.86% | 50.02% | 42.84% |
 | Stable Diffusion | StyleGAN2 | 92.77% | 59.74% | 33.03% |
+
+## VGG16 + BatchNorm Findings
+
+The VGG16 architecture is rebuilt from scratch with BatchNormalization layers added after each convolutional layer, then three fully-connected layers (1024 → 1024 → 512 → 2) for binary real/fake classification. The code supports optionally loading pretrained VGGFace weights (`weights/vgg16_weights.h5`) if the file is present, but the experiment below was run without them (no weights file available), so the model was trained with random initialization.
+
+| Train | Test | Train Acc | Test Acc | Difference | ROC-AUC | AP Score |
+|---|---|---|---|---|---|---|
+| StyleGAN1 | StyleGAN1 | 99.98% | 99.55% | 0.43% | 0.99555 | 0.99186 |
 
 ## Helpful Vocab
 - GAN: Generative Adversarial Network. Two models are fighting to fool each other. One model (discriminator) will act as a judge, looking at images and thinking "is this real? or is it fake?" while the other model (generator) generates fake images from random noise that may look like tv static. The generator will continue to produce fake images until it fools the discriminator into believing it is a real image. The end result is the generator itself that has been trained to fool the discriminator. We now have something to generate realistic fake image. The more complex and detailed an image is, the more difficult it is for a GAN to replicate.

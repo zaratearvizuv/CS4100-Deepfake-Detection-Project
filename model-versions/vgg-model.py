@@ -1,5 +1,4 @@
 import os
-import cv2
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
@@ -18,14 +17,13 @@ import pandas as pd
 trainRealDir = os.path.join("datasets", "stylegan1-dataset", "real")
 trainFakeDir = os.path.join("datasets", "stylegan1-dataset", "fake")
 
-testRealDir = os.path.join("datasets", "stylegan2-dataset", "real")
-testFakeDir = os.path.join("datasets", "stylegan2-dataset", "fake")
+testRealDir = os.path.join("datasets", "stylegan1-dataset", "real")
+testFakeDir = os.path.join("datasets", "stylegan1-dataset", "fake")
 
 trainName = "StyleGAN1"
-testName = "StyleGAN2"
+testName = "StyleGAN1"
 
 maxTrain = 50000
-maxVal = 10000
 maxTest = 10000
 
 batchSize = 32
@@ -73,7 +71,7 @@ def buildDf(realDir, fakeDir, maxPerClass, nested=False):
     random.shuffle(allData)
     return pd.DataFrame(allData, columns=["filename", "class"])
 
-# here I am building the VGG16 architecture with BatchNorm and loading VGGFace weights
+# here I am building the VGG16 architecture with BatchNorm
 def buildVgg(inputShape, path=None):
     inp = Input(shape=inputShape)
 
@@ -137,28 +135,6 @@ def buildClassifier(inputShape, path=None):
     return mdl
 
 
-def plotLoss(ep, loss, valLoss):
-    plt.figure(figsize=(10, 6))
-    plt.plot(ep, loss, 'bo', label='Training Loss')
-    plt.plot(ep, valLoss, 'orange', label='Validation Loss')
-    plt.title('Training and Validation Loss')
-    plt.xlabel('Epoch')
-    plt.ylabel('Loss')
-    plt.legend()
-    plt.grid(True)
-    plt.show()
-
-def plotAcc(ep, acc, valAcc):
-    plt.figure(figsize=(10, 6))
-    plt.plot(ep, acc, 'bo', label='Training Accuracy')
-    plt.plot(ep, valAcc, 'orange', label='Validation Accuracy')
-    plt.title('Training and Validation Accuracy')
-    plt.xlabel('Epoch')
-    plt.ylabel('Accuracy')
-    plt.legend()
-    plt.grid(True)
-    plt.show()
-
 
 if __name__ == "__main__":
     
@@ -215,12 +191,20 @@ if __name__ == "__main__":
         verbose=1,
         callbacks=[reduceLr])
 
-    # here I am plotting the training curves
+    # here I am plotting and saving the training curves
     epRange = range(1, len(hist.history['loss']) + 1)
-    plotLoss(epRange, hist.history['loss'], hist.history['val_loss'])
-    plotAcc(epRange, hist.history['acc'], hist.history['val_acc'])
 
-    # saving the accuracy plot
+    plt.figure(figsize=(10, 6))
+    plt.plot(epRange, hist.history['loss'], 'bo', label='Training Loss')
+    plt.plot(epRange, hist.history['val_loss'], 'orange', label='Validation Loss')
+    plt.title('Training and Validation Loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.grid(True)
+    plt.savefig(os.path.join(folder, "loss.png"))
+    plt.close()
+
     plt.figure(figsize=(10, 6))
     plt.plot(epRange, hist.history['acc'], 'bo', label='Training Accuracy')
     plt.plot(epRange, hist.history['val_acc'], 'orange', label='Validation Accuracy')
